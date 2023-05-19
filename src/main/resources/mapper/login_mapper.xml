@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.celiaKey.orders.mvc.dao.LoginDao">
+    <!-- 一对多 -->
+    <resultMap id="deptAndUser" type="com.celiaKey.orders.mvc.entity.Dept">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="state" column="state"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <collection property="userList" column="id" javaType="List"
+                    ofType="com.celiaKey.orders.mvc.entity.User" select="queryUserOfDept">
+            <id property="id" column="id"/>
+            <result property="name" column="name"/>
+            <result property="pwd" column="pwd"/>
+            <result property="status" column="status"/>
+            <result property="deptId" column="dept_id"/>
+            <result property="delFlag" column="del_flag"/>
+            <result property="createTime" column="create_time"/>
+            <result property="updateTime" column="update_time"/>
+        </collection>
+    </resultMap>
+
+    <insert id="register">
+        INSERT INTO t_user (user_name, pwd, del_flag, create_time, update_time)
+        VALUES (#{user.userName}, #{user.pwd}, #{user.delFlag}, now(), now())
+    </insert>
+
+    <select id="queryDeptAndOfUser" resultMap="deptAndUser">
+        SELECT * FROM t_dept
+    </select>
+    <select id="queryUserOfDept" resultType="com.celiaKey.orders.mvc.entity.User">
+        SELECT * FROM t_user WHERE dept_id = #{id}
+    </select>
+</mapper>
